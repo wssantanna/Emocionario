@@ -1,3 +1,4 @@
+namespace Emocionario.Domain.Usuarios;
 using Emocionario.Domain.Usuarios.ValueObjects;
 public sealed class Usuario {
     public Guid Id { get; private set; }
