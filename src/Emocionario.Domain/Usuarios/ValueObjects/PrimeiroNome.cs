@@ -6,12 +6,15 @@ public readonly record struct PrimeiroNome
     {
         if (string.IsNullOrWhiteSpace(valor))
             throw new ArgumentException("O primeiro nome não pode estar vazio.", nameof(valor));
-        if (valor.Length < 3)
+
+        var nomeNormalizado = valor.Trim();
+
+        if (nomeNormalizado.Length < 3)
             throw new ArgumentException("O primeiro nome deve ter no mínimo 3 caracteres.", nameof(valor));
-        if (valor.Length > 50)
+        if (nomeNormalizado.Length > 50)
             throw new ArgumentException("O primeiro nome deve ter no máximo 50 caracteres.", nameof(valor));
 
-        Valor = valor;
+        Valor = nomeNormalizado;
     }
     public override string ToString() => Valor;
     public static implicit operator string(PrimeiroNome primeiroNome) => primeiroNome.Valor;
