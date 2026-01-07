@@ -22,7 +22,7 @@ public sealed class UsuarioService : IUsuarioService
         var nome = new PrimeiroNome(dto.Nome);
         var sobrenome = new Sobrenome(dto.Sobrenome);
         DataNascimento? dataNascimento = dto.DataNascimento.HasValue
-            ? new DataNascimento(DateOnly.FromDateTime(dto.DataNascimento.Value))
+            ? new DataNascimento(dto.DataNascimento.Value)
             : null;
 
         var usuario = Usuario.Criar(nome, sobrenome, email, dataNascimento);
@@ -61,7 +61,7 @@ public sealed class UsuarioService : IUsuarioService
             : usuario.Sobrenome;
 
         DataNascimento? dataNascimento = dto.DataNascimento.HasValue
-            ? new DataNascimento(DateOnly.FromDateTime(dto.DataNascimento.Value))
+            ? new DataNascimento(dto.DataNascimento.Value)
             : usuario.DataNascimento;
 
         usuario.Atualizar(nome, sobrenome, dataNascimento);
@@ -84,7 +84,7 @@ public sealed class UsuarioService : IUsuarioService
             Nome = usuario.Nome,
             Sobrenome = usuario.Sobrenome,
             Email = usuario.Email,
-            DataNascimento = usuario.DataNascimento?.Valor.ToDateTime(TimeOnly.MinValue),
+            DataNascimento = usuario.DataNascimento?.Valor,
             CriadoEm = usuario.CriadoEm,
             AtualizadoEm = usuario.AtualizadoEm
         };

@@ -4,7 +4,9 @@ public readonly record struct DataNascimento
     public DateOnly Valor { get; }
     public DataNascimento(DateOnly valor)
     {
-        if (valor > DateOnly.FromDateTime(DateTime.UtcNow))
+        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        if (valor > hoje)
             throw new ArgumentException("A data de nascimento não pode ser em uma data futura.", nameof(valor));
 
         Valor = valor;
