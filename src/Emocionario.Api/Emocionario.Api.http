@@ -1,0 +1,6 @@
+@Emocionario.Api_HostAddress = http://localhost:5089
+
+GET {{Emocionario.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
