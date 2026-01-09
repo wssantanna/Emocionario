@@ -6,62 +6,48 @@ using Microsoft.AspNetCore.Mvc;
 namespace Emocionario.Api.Endpoints;
 
 /// <summary>
-/// Define todos os endpoints HTTP para operações relacionadas a usuários.
-/// Utiliza Minimal APIs do ASP.NET Core.
+/// Define os endpoints HTTP para operações de usuários utilizando Minimal APIs.
 /// </summary>
 public static class UsuariosEndpoints
 {
     /// <summary>
-    /// Mapeia todos os endpoints de usuários no WebApplication.
+    /// Mapeia todos os endpoints de usuários.
     /// </summary>
-    /// <param name="app">A instância do WebApplication</param>
     public static void MapUsuariosEndpoints(this WebApplication app)
     {
         var group = app.MapGroup("/api/usuarios")
             .WithTags("Usuários")
             .WithOpenApi();
 
-        // POST /api/usuarios - Criar novo usuário
         group.MapPost("/", CriarUsuario)
             .WithName("CriarUsuario")
             .WithSummary("Cria um novo usuário")
-            .WithDescription("Cria um novo usuário no sistema com os dados fornecidos.")
             .Produces<UsuarioDto>(StatusCodes.Status201Created)
             .ProducesValidationProblem()
-            .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status409Conflict);
 
-        // GET /api/usuarios/{id} - Obter usuário por ID
         group.MapGet("/{id:guid}", ObterUsuarioPorId)
             .WithName("ObterUsuarioPorId")
             .WithSummary("Obtém um usuário por ID")
-            .WithDescription("Retorna os dados de um usuário específico pelo seu identificador único.")
             .Produces<UsuarioDto>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
-        // GET /api/usuarios/email/{email} - Obter usuário por email
         group.MapGet("/email/{email}", ObterUsuarioPorEmail)
             .WithName("ObterUsuarioPorEmail")
             .WithSummary("Obtém um usuário por email")
-            .WithDescription("Retorna os dados de um usuário específico pelo seu endereço de email.")
             .Produces<UsuarioDto>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
-        // PUT /api/usuarios/{id} - Atualizar usuário
         group.MapPut("/{id:guid}", AtualizarUsuario)
             .WithName("AtualizarUsuario")
             .WithSummary("Atualiza os dados de um usuário")
-            .WithDescription("Atualiza parcialmente os dados de um usuário existente. O email não pode ser alterado.")
             .Produces(StatusCodes.Status204NoContent)
             .ProducesValidationProblem()
-            .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
-        // DELETE /api/usuarios/{id} - Excluir usuário
         group.MapDelete("/{id:guid}", ExcluirUsuario)
             .WithName("ExcluirUsuario")
             .WithSummary("Exclui um usuário")
-            .WithDescription("Remove permanentemente um usuário do sistema.")
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status404NotFound);
     }
@@ -77,9 +63,7 @@ public static class UsuariosEndpoints
     {
         var validationResult = await validator.ValidateAsync(dto, cancellationToken);
         if (!validationResult.IsValid)
-        {
             return Results.ValidationProblem(validationResult.ToDictionary());
-        }
 
         try
         {
@@ -105,7 +89,7 @@ public static class UsuariosEndpoints
     }
 
     /// <summary>
-    /// Obtém um usuário específico pelo ID.
+    /// Obtém um usuário pelo ID.
     /// </summary>
     private static async Task<IResult> ObterUsuarioPorId(
         [FromRoute] Guid id,
@@ -124,7 +108,7 @@ public static class UsuariosEndpoints
     }
 
     /// <summary>
-    /// Obtém um usuário específico pelo email.
+    /// Obtém um usuário pelo email.
     /// </summary>
     private static async Task<IResult> ObterUsuarioPorEmail(
         [FromRoute] string email,
@@ -161,21 +145,18 @@ public static class UsuariosEndpoints
         [FromServices] IValidator<AtualizarUsuarioDto> validator,
         CancellationToken cancellationToken)
     {
-        // Garante que o ID da rota corresponda ao ID do DTO
         if (id != dto.Id)
         {
             return Results.Problem(
                 title: "ID incompatível",
-                detail: "O ID fornecido na rota não corresponde ao ID no corpo da requisição.",
+                detail: "O ID da rota não corresponde ao ID no corpo da requisição.",
                 statusCode: StatusCodes.Status400BadRequest
             );
         }
 
         var validationResult = await validator.ValidateAsync(dto, cancellationToken);
         if (!validationResult.IsValid)
-        {
             return Results.ValidationProblem(validationResult.ToDictionary());
-        }
 
         try
         {

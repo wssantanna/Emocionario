@@ -7,19 +7,11 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Adicionar serviços ao container
 builder.Services.AddOpenApi();
-
-// Configurar infraestrutura (DbContext, Repositories)
 builder.Services.AddInfrastructure();
-
-// Registrar serviços da camada Application
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
-
-// Registrar validadores do FluentValidation
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
-// Configurar CORS (permitir qualquer origem em desenvolvimento)
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -32,12 +24,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configurar o pipeline de requisições HTTP
-
-// Middleware de tratamento de exceções global
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 
-// Configurar OpenAPI/Swagger apenas em desenvolvimento
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -50,26 +38,21 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// HTTPS Redirection
 app.UseHttpsRedirection();
-
-// CORS
 app.UseCors();
 
-// Mapear endpoints de usuários
 app.MapUsuariosEndpoints();
 
-// Endpoint de health check
-app.MapGet("/health", () => Results.Ok(new
+app.MapGet("/status", () => Results.Ok(new
 {
-    Status = "Healthy",
-    Timestamp = DateTime.UtcNow,
-    Application = "Emocionario API",
-    Version = "1.0.0"
+    Status = "Ok",
+    Fuso = DateTime.UtcNow,
+    Aplicacao = "API RESTful Emocionario",
+    Versao = "1.0.0"
 }))
-.WithName("HealthCheck")
-.WithTags("Health")
-.WithSummary("Verifica o status de saúde da API")
+.WithName("VerificarStatusApi")
+.WithTags("Status")
+.WithSummary("Verifica o status da API")
 .Produces(StatusCodes.Status200OK);
 
 app.Run();

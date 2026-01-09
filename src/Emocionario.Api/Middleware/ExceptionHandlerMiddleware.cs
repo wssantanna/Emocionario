@@ -6,7 +6,6 @@ namespace Emocionario.Api.Middleware;
 
 /// <summary>
 /// Middleware para tratamento global de exceções.
-/// Captura todas as exceções não tratadas e retorna respostas HTTP apropriadas.
 /// </summary>
 public class ExceptionHandlerMiddleware
 {
@@ -19,6 +18,9 @@ public class ExceptionHandlerMiddleware
         _logger = logger;
     }
 
+    /// <summary>
+    /// Executa o middleware capturando e tratando exceções.
+    /// </summary>
     public async Task InvokeAsync(HttpContext context)
     {
         try
@@ -46,7 +48,7 @@ public class ExceptionHandlerMiddleware
             ValidationException valEx => CreateValidationErrorResponse(
                 HttpStatusCode.BadRequest,
                 "Erro de validação",
-                valEx.Errors.Select(e => new { Field = e.PropertyName, Error = e.ErrorMessage })
+                valEx.Errors.Select(e => new { Campo = e.PropertyName, Erro = e.ErrorMessage })
             ),
             KeyNotFoundException notFoundEx => CreateErrorResponse(
                 HttpStatusCode.NotFound,
@@ -61,7 +63,7 @@ public class ExceptionHandlerMiddleware
             _ => CreateErrorResponse(
                 HttpStatusCode.InternalServerError,
                 "Erro interno do servidor",
-                "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde."
+                "Ocorreu um erro inesperado."
             )
         };
 
@@ -76,11 +78,11 @@ public class ExceptionHandlerMiddleware
     {
         return ((int)statusCode, new
         {
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-            Title = title,
+            Tipo = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+            Titulo = title,
             Status = (int)statusCode,
-            Detail = detail,
-            Timestamp = DateTime.UtcNow
+            Detalhe = detail,
+            DataHora = DateTime.UtcNow
         });
     }
 
@@ -88,11 +90,11 @@ public class ExceptionHandlerMiddleware
     {
         return ((int)statusCode, new
         {
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-            Title = title,
+            Tipo = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+            Titulo = title,
             Status = (int)statusCode,
-            Errors = errors,
-            Timestamp = DateTime.UtcNow
+            Erros = errors,
+            DataHora = DateTime.UtcNow
         });
     }
 }
